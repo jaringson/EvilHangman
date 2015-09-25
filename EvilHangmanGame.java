@@ -51,6 +51,7 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 	
 	@Override
 	public Set<String> makeGuess(char guess) throws GuessAlreadyMadeException {
+		comparer.clear();
 		for(String word: dictionarySet){
 			String patt = makePattern(word, guess);
 			if(comparer.containsKey(patt)){
@@ -65,7 +66,7 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 		String winner = "";
 		Set returnSet = new TreeSet<String>();
 		for(Entry<String, Set<String>> entry: comparer.entrySet()){
-			System.out.println(entry.getKey() + "   " + entry.getValue());
+			//System.out.println(entry.getKey() + "   " + entry.getValue());
 			Set next = entry.getValue();
 			if(next.size() > returnSet.size()){
 				returnSet = next;
@@ -99,6 +100,7 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 				}
 			}
 		}
+		dictionarySet = comparer.get(winner);
 		return comparer.get(winner);
 	}
 
