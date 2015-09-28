@@ -13,6 +13,7 @@ public class RunEvilHangman {
 	private static int numguesses;
 	private static int numblanks;
 	private static File file;
+	private static int numguessescurrent;
 	static void rungame(String fileStr, String length, String blanks) throws GuessAlreadyMadeException{
 		IEvilHangmanGame game = new EvilHangmanGame();
 		file = new File(fileStr);
@@ -20,6 +21,7 @@ public class RunEvilHangman {
 		numguesses = new Integer(blanks);
 		numblanks = wordlength;
 		game.startGame(file, wordlength);
+		numguessescurrent = numguesses;
 		
 		char[] guesses = new char[numguesses];
 		StringBuilder word = new StringBuilder();
@@ -27,7 +29,8 @@ public class RunEvilHangman {
 			word.append("-");
 		}
 		for(int i = numguesses;i > 0 ;i--){
-			System.out.println("You have "+i+" guesses left");
+			i = numguessescurrent;
+			System.out.println("You have "+numguessescurrent+" guesses left");
 			System.out.print("Used Letters: ");
 			for(int j = 0; j < guesses.length; j++){
 				System.out.print(guesses[j] + " ");
@@ -39,12 +42,14 @@ public class RunEvilHangman {
 			while(guessing){
 				Scanner user_input = new Scanner(System.in);
 				guess = user_input.next();
-				
 				for(int g= 0; g <guesses.length; g++){
-					if(guess.length() != 1 || !guess.matches("[a-z]")){
+					if(guess.length() != 1 || !guess.matches("[a-zA-Z]")){
 						System.out.println("Invalid Input: " + guess);
 						guessing = true;
 						break;
+					}
+					if(guess.matches("[A-Z]")){
+						guess = guess.toLowerCase();
 					}
 					if(guess.charAt(0) == guesses[g]){
 						System.out.println("Already Guessed " + guess.charAt(0) + " Try Again");
@@ -59,7 +64,7 @@ public class RunEvilHangman {
 			
 			guesses[Math.abs(i - numguesses)] = guess.charAt(0);
 			Set<String> returnSet = game.makeGuess(guess.charAt(0));
-			System.out.println(returnSet);
+			//System.out.println(returnSet);
 			String sampleword = returnSet.iterator().next();
 			//word.delete(0, word.length());
 			Boolean lost = true;
@@ -76,6 +81,7 @@ public class RunEvilHangman {
 			
 			if(lost){
 				System.out.println("Sorry, there is no " + guess.charAt(0)+"'s \n");
+				numguessescurrent--;
 				lost = true;
 			}
 			else{
@@ -84,7 +90,7 @@ public class RunEvilHangman {
 				System.out.println(numblanks);
 			}
 			if(numblanks == 0){
-				System.out.println("You Win!");
+				System.out.println("You Win! Word: " + returnSet.iterator().next());
 				break;
 			}
 			if(i == 1){
