@@ -25,13 +25,14 @@ public class EvilHangmanGame implements IEvilHangmanGame {
 			while(reader.hasNextLine()){
 				String word = reader.nextLine();
 				if(word.length() == wordLength){
-					System.out.println(word);
+					//System.out.println(word);
 					dictionarySet.add(word);
 				}
 			}
 			reader.close();
 		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+			System.out.println("Cannot find File specified");
+			System.exit(0);
 		}
 	}
 	

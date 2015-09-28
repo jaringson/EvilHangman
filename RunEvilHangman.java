@@ -9,12 +9,16 @@ import hangman.IEvilHangmanGame.GuessAlreadyMadeException;
 
 public class RunEvilHangman {
 
-	public static void main(String[] args) throws GuessAlreadyMadeException {
+	private static int wordlength;
+	private static int numguesses;
+	private static int numblanks;
+	private static File file;
+	static void rungame(String fileStr, String length, String blanks) throws GuessAlreadyMadeException{
 		IEvilHangmanGame game = new EvilHangmanGame();
-		File file = new File(args[0]);
-		int wordlength = new Integer(args[1]);
-		int numguesses = new Integer(args[2]);
-		int numblanks = numguesses;
+		file = new File(fileStr);
+		wordlength = new Integer(length);
+		numguesses = new Integer(blanks);
+		numblanks = wordlength;
 		game.startGame(file, wordlength);
 		
 		char[] guesses = new char[numguesses];
@@ -30,8 +34,29 @@ public class RunEvilHangman {
 			}
 			System.out.print("\nWord: " + word);
 			System.out.print("\nEnter Guess: ");
-			Scanner user_input = new Scanner(System.in);
-			String guess = user_input.next();
+			Boolean guessing = true;
+			String guess = "";
+			while(guessing){
+				Scanner user_input = new Scanner(System.in);
+				guess = user_input.next();
+				
+				for(int g= 0; g <guesses.length; g++){
+					if(guess.length() != 1 || !guess.matches("[a-z]")){
+						System.out.println("Invalid Input: " + guess);
+						guessing = true;
+						break;
+					}
+					if(guess.charAt(0) == guesses[g]){
+						System.out.println("Already Guessed " + guess.charAt(0) + " Try Again");
+						guessing=true;
+						break;
+					}
+					guessing = false;
+				}
+			}
+			
+			
+			
 			guesses[Math.abs(i - numguesses)] = guess.charAt(0);
 			Set<String> returnSet = game.makeGuess(guess.charAt(0));
 			System.out.println(returnSet);
@@ -56,11 +81,22 @@ public class RunEvilHangman {
 			else{
 				System.out.println("Yes, there is "+numtimes+ " "+ guess.charAt(0) + "\n");
 				numblanks = numblanks - numtimes;
+				System.out.println(numblanks);
 			}
 			if(numblanks == 0){
 				System.out.println("You Win!");
 				break;
 			}
+			if(i == 1){
+				System.out.println("You lose! \nThe word was: "+ returnSet.iterator().next());
+			}
 		}
+	}
+	
+	public static void main(String[] args) throws GuessAlreadyMadeException {
+		if(args.length != 3){
+			System.out.println("Usage: java [your main class name] dictionary wordLength guesses");
+		}
+		rungame(args[0], args[1], args[2]);
 	}
 }
